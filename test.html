@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+
+var PersonConstructor = (function(){
+     function Person(name){
+        this.name = name;
+     }
+
+     function connect(child, parent){
+        child.parent = parent;
+        return child;
+     }
+
+     function makelist(nameArray){
+        var persons = [];
+        var child = new Person(nameArray[0]),
+            _child;
+
+        for(var i = 1,len = nameArray.length; i < len; i ++){
+            if(!_child) _child = child;
+            var person = new Person(nameArray[i]);
+
+            _child = connect(_child, person);
+
+            persons.push(_child);
+
+            if(i + 1 == len){
+                person = connect(person, child);
+                persons.push(person);
+                return persons;
+            }
+
+            _child = person;
+        }
+     }
+
+     function reName(persons){
+        var names = [];
+        for(var i = 0,len = persons.length; i < len; i ++){
+            names.push(persons[i].name);
+        }
+        return names;
+     }
+
+     function kill(list){
+        var count = 1,
+            index = list[0],
+            _index = 0;
+
+        if(list.length < 3){
+            return list;
+        }
+
+        while(list.length >= 3){
+           
+
+            index = index.parent;
+            _index ++;
+
+            if(_index >= list.length){
+                _index = 0;
+            }
+
+            if(count == 2){
+                index = index.parent;
+
+                list.splice(_index, 1);
+                list = makelist(reName(list));
+                count = 0;
+            }
+            count ++;
+        }
+
+        return list;
+
+     }
+
+     return function(nameArray){
+        var list = makelist(nameArray);
+
+        return kill(list);
+     }
+})();
+
+PersonConstructor(["a", "b", "c", "d", "e"])
+
+</script>
+</html>
